@@ -12,7 +12,8 @@ export default function NetworkStats() {
   const [stats, setStats] = useState<StatItem[]>([])
 
   useEffect(() => {
-    let interval: NodeJS.Timeout
+    const interval = setInterval(loadStats, 3000)
+
 
     async function loadStats() {
       try {
