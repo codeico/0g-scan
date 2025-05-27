@@ -23,7 +23,7 @@ export default function NetworkStats() {
         const formatted: StatItem[] = [
           {
             title: 'Current Block Height',
-            value: dashboard?.blockHeight ? Number(dashboard.blockHeight).toLocaleString() : 'N/A'
+            value: dashboard?.blockNumber ? Number(dashboard.blockNumber).toLocaleString() : 'N/A'
           },
           {
             title: 'TPS (Recent)',
