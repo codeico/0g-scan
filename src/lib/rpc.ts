@@ -1,7 +1,125 @@
 import { ethers } from 'ethers'
+import { TransactionResponse } from 'ethers'
 
-export const RPC_URL = 'https://0g-testnet-rpc.astrostake.xyz'
+export const RPC_URL = 'https://0g.bangcode.id'
 export const provider = new ethers.JsonRpcProvider(RPC_URL)
+
+export type BlockDetail = {
+  epochNumber: number
+  hash: string
+  parentHash: string
+  nonce: string
+  gasLimit: string
+  gasUsed: string
+  size: string
+  difficulty: string
+  timestamp: number
+  transactionCount: number
+}
+
+export type Transaction = {
+  hash: string
+  from: string
+  to: string
+  value: string
+  gasFee: string
+  gasPrice: string
+  timestamp: number
+}
+
+export type ERC20Tx = {
+  hash: string
+  name : string
+  block: number
+  from: string
+  to: string
+  value: string
+  decimals: number
+  tokenAddress: string
+  timestamp: number
+}
+
+export type NativeTx = {
+  hash: string
+  epochNumber: number
+  from: string
+  to: string
+  gasFee: string
+  method?: string
+  timestamp: number
+}
+export type TokenInfo = {
+  name: string
+  symbol: string
+  decimals: number
+  totalSupply: string
+  holderCount: number
+  transferCount: number
+  iconUrl?: string
+  website?: string
+  price?: number
+  totalPrice?: number
+}
+
+export type Holder = {
+  account: {
+    address: string
+  }
+  balance: string
+}
+
+export type Transfer = {
+  transactionHash: string
+  from: string
+  to: string
+  value: string
+  transferTokenInfo?: {
+    symbol?: string
+  }
+}
+
+export type StatEntry = {
+  day: string
+  transferCount: number
+  uniqueSender: number
+  uniqueReceiver: number
+}
+
+export type AddressDetail = {
+  balance: string
+  nonce: number
+}
+
+export type TxWithReceipt = {
+  tx: {
+    hash: string
+    blockNumber: number
+    from: string
+    to: string
+    value: string
+    gasPrice?: string | bigint
+    nonce: number
+    data: string
+  } | null
+  receipt: {
+    status: number
+    gasUsed: string | bigint
+  } | null
+}
+
+export type Block = {
+  number: number
+  hash: string | null
+  gasUsed: bigint | string
+  timestamp: number
+  transactions: readonly string[] // ✅ Biar cocok dengan ethers.js
+}
+
+export type TxChartEntry = {
+  block: number
+  txs: number
+  timestamp: string
+}
 
 export async function getLatestBlockNumber() {
   return await provider.getBlockNumber()
@@ -19,15 +137,46 @@ export async function getLatestBlocks(count: number = 10) {
   return blocks
 }
 
-export async function getTransactionWithReceipt(txHash: string) {
-  const tx = await provider.getTransaction(txHash)
-  const receipt = await provider.getTransactionReceipt(txHash)
-  return { tx, receipt }
+export async function getTransactionWithReceipt(hash: string): Promise<TxWithReceipt> {
+  if (!hash || typeof hash !== 'string') {
+    console.error('❌ Invalid hash parameter to getTransactionWithReceipt:', hash)
+    return { tx: null, receipt: null }
+  }
+
+  try {
+    const txRaw = await provider.getTransaction(hash)
+    const receiptRaw = await provider.getTransactionReceipt(hash)
+
+    if (!txRaw || !receiptRaw) {
+      return { tx: null, receipt: null }
+    }
+
+    return {
+      tx: {
+        hash: txRaw.hash,
+        blockNumber: txRaw.blockNumber ?? -1,
+        from: txRaw.from,
+        to: txRaw.to ?? '0x0',
+        value: txRaw.value.toString(),
+        gasPrice: txRaw.gasPrice?.toString(),
+        nonce: txRaw.nonce,
+        data: txRaw.data,
+      },
+      receipt: {
+        status: receiptRaw.status ?? 0,
+        gasUsed: receiptRaw.gasUsed.toString(),
+      }
+    }
+  } catch (err) {
+    console.error('getTransactionWithReceipt error:', err)
+    return { tx: null, receipt: null }
+  }
 }
+
 
 export async function getRecentTransactions(txCount: number = 10) {
   const latest = await provider.getBlockNumber()
-  let transactions: any[] = []
+  let transactions: TransactionResponse[] = []
   let blocksChecked = 0
   const maxBlocks = 100
 
@@ -35,9 +184,13 @@ export async function getRecentTransactions(txCount: number = 10) {
     const blockNumber = latest - blocksChecked
     const block = await provider.getBlock(blockNumber, true)
 
-    if (block?.transactions?.length) {
-      const validTxs = block.transactions.filter(
-        (tx: any) => tx && typeof tx.hash === 'string' && typeof tx.from === 'string'
+    if (block?.transactions && Array.isArray(block.transactions)) {
+      const validTxs = (block.transactions as TransactionResponse[]).filter(
+        (tx): tx is TransactionResponse =>
+          typeof tx === 'object' &&
+          tx !== null &&
+          typeof tx.hash === 'string' &&
+          typeof tx.from === 'string'
       )
       transactions = transactions.concat(validTxs)
     }
@@ -47,6 +200,7 @@ export async function getRecentTransactions(txCount: number = 10) {
 
   return transactions.slice(0, txCount)
 }
+
 
 export async function getTxChartData(count: number = 10) {
   const latest = await provider.getBlockNumber()
@@ -89,7 +243,7 @@ export async function getAddressTransactions(address: string, limit = 10, skip =
   }
 }
 
-export async function getERC20Transfers(address: string, limit = 10, skip = 0) {
+export async function getERC20Transfers(address: string, limit = 10, skip = 0): Promise<{ list: ERC20Tx[], total: number }> {
   const url = `https://chainscan-galileo.0g.ai/v1/transfer?accountAddress=${address}&limit=${limit}&skip=${skip}&tab=transfers-ERC20&transferType=ERC20`
 
   try {
@@ -97,22 +251,34 @@ export async function getERC20Transfers(address: string, limit = 10, skip = 0) {
     if (!res.ok) throw new Error('Failed to fetch ERC20 transfers')
 
     const json = await res.json()
-    const list = json.result?.list || []
-    const total = json.result?.total || 0
-
-    const parsed = list.map((tx: any) => ({
+    const list: ERC20Tx[] = (json.result?.list || []).map((tx: {
+      transactionHash: string
+      epochNumber: number
+      from: string
+      to: string
+      value: string
+      transferTokenInfo?: {
+        symbol?: string
+        name?: string
+        decimals?: number
+        address?: string
+      }
+      timestamp: number
+    }) => ({
       hash: tx.transactionHash,
       block: tx.epochNumber,
       from: tx.from,
       to: tx.to,
       value: tx.value,
+      decimals: tx.transferTokenInfo?.decimals || 18,
+      tokenAddress: tx.transferTokenInfo?.address || '',
       symbol: tx.transferTokenInfo?.symbol || '',
       name: tx.transferTokenInfo?.name || '',
-      decimals: tx.transferTokenInfo?.decimals || 18,
-      timestamp: tx.timestamp,
+      timestamp: tx.timestamp
     }))
 
-    return { list: parsed, total }
+    const total = json.result?.total || 0
+    return { list, total }
   } catch (err) {
     console.error('❌ ERC20 API error:', err)
     return { list: [], total: 0 }
@@ -137,7 +303,16 @@ export async function getTokenHoldings(address: string): Promise<TokenHolding[]>
   try {
     const res = await fetch(url)
     const data = await res.json()
-    return data.result?.list.map((item: any) => ({
+    return data.result?.list.map((item: {
+      address: string
+      name: string
+      symbol: string
+      decimals: number
+      amount: number
+      iconUrl?: string
+      price?: number | null
+      totalPrice?: number | null
+    }) => ({    
       address: item.address,
       name: item.name,
       symbol: item.symbol,
@@ -325,7 +500,7 @@ export async function getTransactionsByBlockHash(
   hash: string,
   limit = 10,
   skip = 0
-): Promise<any[]> {
+): Promise<Transaction[]> {
   try {
     const res = await fetch(`${API_BASE}/transaction?blockHash=${hash}&limit=${limit}&skip=${skip}&tab=transactions`)
     const data = await res.json()
@@ -335,10 +510,11 @@ export async function getTransactionsByBlockHash(
       return []
     }
 
-    // Convert from/to addresses if net16601:
-    const txs = data.result.list
+    const txs: Transaction[] = data.result.list
+
+    // ✨ Konversi from & to ke EVM address
     const enriched = await Promise.all(
-      txs.map(async (tx: any) => {
+      txs.map(async (tx) => {
         const [from, to] = await Promise.all([
           convertToEvmAddress(tx.from),
           convertToEvmAddress(tx.to),
@@ -346,12 +522,14 @@ export async function getTransactionsByBlockHash(
         return { ...tx, from, to }
       })
     )
+
     return enriched
   } catch (err) {
     console.error('Error fetching transactions:', err)
     return []
   }
 }
+
 
 export async function convertToEvmAddress(bech32: string): Promise<string> {
   if (!bech32?.startsWith('net16601:')) return bech32

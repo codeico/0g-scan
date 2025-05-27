@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { getLatestTransactions } from '@/lib/rpc'
+import { getLatestTransactions, Transaction } from '@/lib/rpc'
 
 export default function TransactionTable() {
-  const [txs, setTxs] = useState<any[]>([])
+  const [txs, setTxs] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

@@ -2,35 +2,48 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
 import {
-  getTokenContractDetail,
+  getTokenByAddress,
+  getTokenDailyStats,
   getTokenHolders,
   getTokenTransfers,
-  getTokenDailyStats,
-  getTokenByAddress
+  type TokenInfo,
+  type Holder,
+  type Transfer,
+  type StatEntry
 } from '@/lib/rpc'
-import Link from 'next/link'
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, CartesianGrid
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend
 } from 'recharts'
 
 type Tab = 'transfers' | 'holders' | 'analysis'
 
+const short = (addr: string) => addr?.slice(0, 6) + '...' + addr?.slice(-4)
+
+
 export default function TokenPage() {
   const params = useParams()
-  const tokenAddress = params?.address as string
+  const tokenAddress = Array.isArray(params?.address) ? params.address[0] : (params?.address as string)
 
   const [tab, setTab] = useState<Tab>('transfers')
-  const [token, setToken] = useState<any>(null)
-  const [holders, setHolders] = useState<any[]>([])
-  const [transfers, setTransfers] = useState<any[]>([])
-  const [stats, setStats] = useState<any[]>([])
+  const [token, setToken] = useState<TokenInfo | null>(null)
+  const [holders, setHolders] = useState<Holder[]>([])
+  const [transfers, setTransfers] = useState<Transfer[]>([])
+  const [stats, setStats] = useState<StatEntry[]>([])
   const [loading, setLoading] = useState(true)
 
-  const short = (addr: string) => addr?.slice(0, 6) + '...' + addr?.slice(-4)
-
   useEffect(() => {
-    async function load() {
+    if (!tokenAddress) return
+    const load = async () => {
       try {
         setLoading(true)
         const [tokenInfo, holderList, transferList, dailyStats] = await Promise.all([
@@ -56,7 +69,7 @@ export default function TokenPage() {
   return (
     <main className="token-page">
       <h1 className="token-title">
-        <img src={token?.iconUrl || '/0g-logos.png'} width={24} height={24} alt="Token Icon" />
+        <Image src={token?.iconUrl || '/0g-logos.png'} width={24} height={24} alt="Token Icon" />
         {token?.name || 'Unknown'} <span className="token-symbol">({token?.symbol || '...'})</span>
       </h1>
 
@@ -64,14 +77,16 @@ export default function TokenPage() {
         <div>
           <p><strong>Price:</strong> {token?.price ? `$${token.price}` : 'Not Available'}</p>
           <p><strong>Market Cap:</strong> {token?.totalPrice ? `$${token.totalPrice}` : '--'}</p>
-          <p><strong>Total Supply:</strong> {token?.totalSupply ? `${Number(token.totalSupply) / 1e18} ${token?.symbol}` : '--'}</p>
-          <p><strong>Official Site:</strong> {token?.website ? <a href={token.website} className="token-link" target="_blank" rel="noreferrer">{token.website}</a> : '--'}</p>
+          <p><strong>Total Supply:</strong> {token?.totalSupply ? `${(Number(token.totalSupply) / 1e18).toLocaleString()} ${token.symbol}` : '--'}</p>
+          <p><strong>Official Site:</strong> {token?.website ? (
+            <a href={token.website} className="token-link" target="_blank" rel="noreferrer">{token.website}</a>
+          ) : '--'}</p>
         </div>
         <div>
           <p><strong>Contract:</strong> <Link href={`/token/${tokenAddress}`} className="token-link">{short(tokenAddress)}</Link></p>
-          <p><strong>Decimals:</strong> {token?.decimals || '--'}</p>
-          <p><strong>Holders:</strong> {token?.holderCount || '--'}</p>
-          <p><strong>Transfers:</strong> {token?.transferCount || '--'}</p>
+          <p><strong>Decimals:</strong> {token?.decimals ?? '--'}</p>
+          <p><strong>Holders:</strong> {token?.holderCount ?? '--'}</p>
+          <p><strong>Transfers:</strong> {token?.transferCount ?? '--'}</p>
         </div>
       </div>
 
@@ -104,10 +119,24 @@ export default function TokenPage() {
               <tbody>
                 {transfers.map((tx, i) => (
                   <tr key={tx.transactionHash + i}>
-                    <td><Link href={`/tx/${tx.transactionHash}`} className="token-link">{tx.transactionHash.slice(0, 10)}...</Link></td>
-                    <td><Link href={`/address/${tx.from}`} className="token-link">{short(tx.from)}</Link></td>
-                    <td><Link href={`/address/${tx.to}`} className="token-link">{short(tx.to)}</Link></td>
-                    <td className="text-right text-green">{(Number(tx.value) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 4 })} {tx.transferTokenInfo?.symbol || ''}</td>
+                    <td>
+                      <Link href={`/tx/${tx.transactionHash}`} className="token-link">
+                        {tx.transactionHash.slice(0, 10)}...
+                      </Link>
+                    </td>
+                    <td>
+                      <Link href={`/address/${tx.from}`} className="token-link">
+                        {short(tx.from)}
+                      </Link>
+                    </td>
+                    <td>
+                      <Link href={`/address/${tx.to}`} className="token-link">
+                        {short(tx.to)}
+                      </Link>
+                    </td>
+                    <td className="text-right text-green">
+                      {(Number(tx.value) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 4 })} {tx.transferTokenInfo?.symbol || ''}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -127,8 +156,14 @@ export default function TokenPage() {
                 {holders.map((h, i) => (
                   <tr key={h.account.address}>
                     <td>{i + 1}</td>
-                    <td><Link href={`/address/${h.account.address}`} className="token-link">{short(h.account.address)}</Link></td>
-                    <td className="text-right text-green">{(Number(h.balance) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 4 })} {token?.symbol}</td>
+                    <td>
+                      <Link href={`/address/${h.account.address}`} className="token-link">
+                        {short(h.account.address)}
+                      </Link>
+                    </td>
+                    <td className="text-left text-green">
+                      {(Number(h.balance) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 4 })} {token?.symbol}
+                    </td>
                   </tr>
                 ))}
               </tbody>

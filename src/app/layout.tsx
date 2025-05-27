@@ -1,9 +1,10 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import './globals.css';
-import { Press_Start_2P } from 'next/font/google';
-import Header from '@/components/Header'; // ✅ import Header
+import { Geist, Geist_Mono, Press_Start_2P } from "next/font/google";
+import "./globals.css";
+import Header from "@/components/Header";
 
+// Font initialization
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,16 +16,18 @@ const geistMono = Geist_Mono({
 });
 
 const retroFont = Press_Start_2P({
-  subsets: ['latin'],
-  weight: '400',
-  variable: '--font-retro',
+  variable: "--font-retro",
+  weight: "400",
+  subsets: ["latin"],
 });
 
+// Metadata
 export const metadata: Metadata = {
   title: "OG Explorer",
   description: "Blockchain Explorer for 0G",
 };
 
+// Root Layout
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,9 +35,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${retroFont.variable} font-mono bg-[#0d1117] text-[#e6edf3]`}>
+      <body
+        className={`
+          ${geistSans.variable} 
+          ${geistMono.variable} 
+          ${retroFont.variable} 
+          font-mono 
+          bg-[#0d1117] 
+          text-[#e6edf3]
+        `}
+      >
         <div className="page-container">
-          <Header /> {/* ✅ header ditampilkan di semua halaman */}
+          <Header />
           {children}
         </div>
       </body>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
 import Link from 'next/link'
 import './Header.css' // Import style
+import Image from 'next/image'
 
 export default function Header() {
   const [search, setSearch] = useState('')
@@ -30,7 +31,7 @@ export default function Header() {
       <div className="header-container">
         {/* Logo */}
         <Link href="/" className="header-logo">
-          <img src="/0g-logos.png" alt="OG Logo" />
+          <Image src="/0g-logos.png" alt="OG Logo" width={50} height={20}/>
           <span>OG Explorer</span>
         </Link>
 
@@ -47,7 +48,7 @@ export default function Header() {
 
         {/* Wallet (example) */}
         <div className="header-wallet">
-          <span>0xe6F5...4DBd</span>
+          <span>Wallet Address</span>
         </div>
       </div>
     </header>
