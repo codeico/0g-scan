@@ -12,9 +12,6 @@ export default function NetworkStats() {
   const [stats, setStats] = useState<StatItem[]>([])
 
   useEffect(() => {
-    const interval = setInterval(loadStats, 3000)
-
-
     async function loadStats() {
       try {
         const [dashboard, latestPlot, gasInfo] = await Promise.all([
@@ -22,11 +19,11 @@ export default function NetworkStats() {
           getLatestPlotStats(),
           getGasPriceInfo(),
         ])
-
+  
         const formatted: StatItem[] = [
           {
             title: 'Current Block Height',
-            value: dashboard?.blockNumber ? Number(dashboard.blockNumber).toLocaleString() : 'N/A'
+            value: dashboard?.blockHeight ? Number(dashboard.blockHeight).toLocaleString() : 'N/A'
           },
           {
             title: 'TPS (Recent)',
@@ -49,19 +46,21 @@ export default function NetworkStats() {
             value: gasInfo.min ? Number(gasInfo.min).toLocaleString() : 'N/A'
           },
         ]
-
+  
         setStats(formatted)
       } catch (e) {
         console.error('❌ Failed to load network stats:', e)
       }
     }
-
-    loadStats() // load pertama kali
-
-    interval = setInterval(loadStats, 3000) // refresh setiap 5 detik
-
-    return () => clearInterval(interval) // bersihkan interval saat komponen unmount
+  
+    loadStats()
+  
+    // ✅ fix here: langsung inisialisasi saat deklarasi
+    const interval = setInterval(loadStats, 3000)
+  
+    return () => clearInterval(interval)
   }, [])
+  
 
   return (
     <div className="network-grid">
