@@ -8,7 +8,7 @@ export default function BlockAndTransactionTabs() {
   const [activeTab, setActiveTab] = useState<'blocks' | 'transactions'>('blocks')
 
   return (
-    <section className="tab-section">
+    <section className="tab-section mt-6 mb-6">
       {/* Tabs Header */}
       <div className="tab-header">
         <button
@@ -26,7 +26,7 @@ export default function BlockAndTransactionTabs() {
       </div>
 
       {/* Tab Content */}
-        {activeTab === 'blocks' ? <BlockTable /> : <TransactionTable />}
+      {activeTab === 'blocks' ? <BlockTable /> : <TransactionTable />}
     </section>
   )
 }
