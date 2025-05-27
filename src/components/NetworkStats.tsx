@@ -12,6 +12,8 @@ export default function NetworkStats() {
   const [stats, setStats] = useState<StatItem[]>([])
 
   useEffect(() => {
+    let interval: NodeJS.Timeout
+
     async function loadStats() {
       try {
         const [dashboard, latestPlot, gasInfo] = await Promise.all([
@@ -23,7 +25,7 @@ export default function NetworkStats() {
         const formatted: StatItem[] = [
           {
             title: 'Current Block Height',
-            value: dashboard?.blockHeight ? Number(dashboard.blockHeight).toLocaleString() : 'N/A'
+            value: dashboard?.blockNumber ? Number(dashboard.blockNumber).toLocaleString() : 'N/A'
           },
           {
             title: 'TPS (Recent)',
@@ -53,7 +55,11 @@ export default function NetworkStats() {
       }
     }
 
-    loadStats()
+    loadStats() // load pertama kali
+
+    interval = setInterval(loadStats, 3000) // refresh setiap 5 detik
+
+    return () => clearInterval(interval) // bersihkan interval saat komponen unmount
   }, [])
 
   return (

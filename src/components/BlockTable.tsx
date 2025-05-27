@@ -1,21 +1,27 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getLatestBlocks, Block} from '@/lib/rpc'
+import { getLatestBlocks, Block } from '@/lib/rpc'
 import Link from 'next/link'
 import { formatEther } from 'ethers'
-
 
 export default function BlockTable() {
   const [blocks, setBlocks] = useState<Block[]>([])
 
   useEffect(() => {
     async function fetchBlocks() {
-      const data: (Block | null)[] = await getLatestBlocks(10)
-      setBlocks(data.filter((b): b is Block => b !== null))
+      try {
+        const data: (Block | null)[] = await getLatestBlocks(10)
+        setBlocks(data.filter((b): b is Block => b !== null))
+      } catch (e) {
+        console.error('❌ Failed to fetch blocks:', e)
+      }
     }
-  
+
     fetchBlocks()
+    const interval = setInterval(fetchBlocks, 3000)
+
+    return () => clearInterval(interval)
   }, [])
 
   return (
@@ -42,12 +48,13 @@ export default function BlockTable() {
                     <Link href={`/block/${block.number}`}>#{block.number}</Link>
                   </td>
                   <td className="py-2 px-2 text-gray-400 truncate max-w-[200px]">
-                  {block.hash ? (
-  <Link href={`/tx/${block.transactions[0]}`} className="hover:underline">{block.hash}</Link>
-) : (
-  <span className="text-gray-500">N/A</span>
-)}
-
+                    {block.hash ? (
+                      <Link href={`/tx/${block.transactions[0]}`} className="hover:underline">
+                        {block.hash}
+                      </Link>
+                    ) : (
+                      <span className="text-gray-500">N/A</span>
+                    )}
                   </td>
                   <td className="py-2 px-2 text-gray-300">{block.transactions.length}</td>
                   <td className="py-2 px-2 text-green-400">{gasUsedOG} OG</td>

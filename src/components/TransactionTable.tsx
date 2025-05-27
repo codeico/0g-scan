@@ -19,7 +19,11 @@ export default function TransactionTable() {
         setLoading(false)
       }
     }
+
     fetchTxs()
+    const interval = setInterval(fetchTxs, 3000)
+
+    return () => clearInterval(interval)
   }, [])
 
   const formatAge = (timestamp: number) => {
@@ -32,7 +36,6 @@ export default function TransactionTable() {
 
   return (
     <section className="bg-[#161b22] border border-[#30363d] text-[#e6edf3] p-4 rounded-xl shadow">
-
       {loading ? (
         <p className="text-sm text-gray-400">Loading transactions...</p>
       ) : txs.length === 0 ? (

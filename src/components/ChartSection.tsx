@@ -17,14 +17,22 @@ export default function ChartSection() {
 
   useEffect(() => {
     async function fetchChartData() {
-      const result = await getTxChartData(20)
-      setData(result)
+      try {
+        const result = await getTxChartData(20)
+        setData(result)
+      } catch (e) {
+        console.error('❌ Failed to fetch chart data:', e)
+      }
     }
+
     fetchChartData()
+    const interval = setInterval(fetchChartData, 3000)
+
+    return () => clearInterval(interval)
   }, [])
 
   return (
-    <section className="bg-[#161b22] border border-[#30363d] p-4 rounded-xl shadow text-white">
+    <section className="bg-[#161b22] border border-[#30363d] p-4 rounded-xl shadow h-[300px] mb-6 text-white">
       <h2 className="text-lg font-semibold mb-2 text-white">Tx Count per Block</h2>
       <ResponsiveContainer width="100%" height="90%">
         <LineChart data={data}>

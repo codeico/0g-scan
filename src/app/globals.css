@@ -483,3 +483,12 @@ button:disabled {
     border-bottom: 1px solid #30363d;
   }
 }
+/* Tambahkan margin antar section agar tidak saling menempel */
+.section + .section {
+  margin-top: 2rem; /* atau 3rem, sesuai preferensi */
+}
+
+/* Optional: agar semua section punya margin bawah juga */
+.section {
+  margin-bottom: 2rem;
+}
