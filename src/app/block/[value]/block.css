@@ -1,0 +1,67 @@
+.block-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+    color: white;
+  }
+  
+  .block-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .block-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  
+  .block-tabs button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+  }
+  
+  .block-tabs .active-tab {
+    color: white;
+    border-color: #00ff99;
+  }
+  
+  .block-card {
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .block-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid #333;
+  }
+  
+  .block-row:last-child {
+    border-bottom: none;
+  }
+  
+  .wrap {
+    word-break: break-all;
+  }
+  
+  .transaction-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .transaction-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #333;
+  }
+  

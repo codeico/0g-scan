@@ -1,0 +1,86 @@
+.header {
+    background-color: #161b22;
+    border-bottom: 1px solid #30363d;
+    color: #e6edf3;
+    padding: 1rem 0;
+  }
+  
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #e6edf3;
+    font-weight: bold;
+    font-size: 1rem;
+  }
+  
+  .header-logo img {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+  }
+  
+  /* Search */
+  .header-search {
+    position: relative;
+    flex-grow: 1;
+    max-width: 600px;
+  }
+  
+  .header-search input {
+    width: 100%;
+    padding: 0.5rem 0.75rem 0.5rem 2rem;
+    font-size: 0.875rem;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    background-color: #0d1117;
+    color: #e6edf3;
+  }
+  
+  .header-search input:focus {
+    outline: none;
+    border-color: #00ff99;
+    box-shadow: 0 0 0 1px #00ff99;
+  }
+  
+  .search-icon {
+    position: absolute;
+    top: 50%;
+    left: 0.5rem;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #999;
+  }
+  
+  /* Wallet address display */
+  .header-wallet {
+    display: none;
+  }
+  
+  @media (min-width: 1024px) {
+    .header-wallet {
+      display: block;
+      font-size: 0.85rem;
+    }
+  
+    .header-wallet span {
+      background-color: #21262d;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      color: #c9d1d9;
+    }
+  }
+  
