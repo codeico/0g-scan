@@ -25,6 +25,8 @@ export type Transaction = {
   gasFee: string
   gasPrice: string
   timestamp: number
+  method: string
+  status: number
 }
 
 export type ERC20Tx = {
@@ -119,6 +121,12 @@ export type TxChartEntry = {
   block: number
   txs: number
   timestamp: string
+}
+
+export type ApiResponse = {
+  result?: {
+    list?: Transaction[]
+  }
 }
 
 export async function getLatestBlockNumber() {
@@ -397,17 +405,15 @@ export async function getStorageTxCount(from: string): Promise<number> {
 
       if (!res.ok) throw new Error(`Failed to fetch tx at skip ${skip}`)
 
-      const data = await res.json()
-      const list = data?.result?.list ?? []
+      const data: ApiResponse = await res.json()
+      const list = data.result?.list ?? []
 
-      // Filter yang sesuai
       const filtered = list.filter(
-        (tx: any) => tx.method === '0xae722e82' && tx.status === 0
+        (tx) => tx.method === '0xae722e82' && tx.status === 0
       )
 
       totalCount += filtered.length
 
-      // Jika jumlah hasil kurang dari limit, artinya data habis
       if (list.length < limit) {
         hasMore = false
       } else {
