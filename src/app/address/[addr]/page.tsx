@@ -143,10 +143,10 @@ export default function AddressClientPage() {
             <thead className="text-[#00bfff]">
               <tr>
                 <th className="px-4 py-2">Txn Hash</th>
+                <th className="px-4 py-2">Method</th>
                 <th className="px-4 py-2">Block</th>
                 <th className="px-4 py-2">From</th>
                 <th className="px-4 py-2">To</th>
-                <th className="px-4 py-2">Method</th>
                 <th className="px-4 py-2">Gas</th>
                 <th className="px-4 py-2">Age</th>
               </tr>
@@ -154,13 +154,11 @@ export default function AddressClientPage() {
             <tbody>
               {nativeTxs.map((tx, i) => (
                 <tr key={`${tx.hash}-${i}`} className="border-t border-[#30363d] hover:bg-[#0d1117]">
-                  <td className="px-4 py-2 text-blue-400">
-                    <Link href={`/tx/${tx.hash}`} className="hover:underline">{short(tx.hash)}</Link>
-                  </td>
+                  <td className="px-4 py-2 text-blue-400"><Link href={`/tx/${tx.hash}`} className="hover:underline">{short(tx.hash)}</Link></td>
+                  <td className="px-4 py-2 text-yellow-400">{tx.method || '-'}</td>
                   <td className="px-4 py-2"><Link href={`/block/${tx.epochNumber}`} className="hover:underline">{tx.epochNumber}</Link></td>
                   <td className="px-4 py-2"><Link href={`/address/${tx.from}`} className="hover:underline">{short(tx.from)}</Link></td>
                   <td className="px-4 py-2"><Link href={`/address/${tx.to}`} className="hover:underline">{short(tx.to)}</Link></td>
-                  <td className="px-4 py-2 text-yellow-400">{tx.method || '-'}</td>
                   <td className="px-4 py-2 text-[#00ff99]">{(Number(tx.gasFee) / 1e18).toFixed(6)} 0G</td>
                   <td className="px-4 py-2 text-gray-400">
                     {tx.timestamp ? `${formatAge(Math.floor(Date.now() / 1000 - tx.timestamp))} ago` : '-'}
