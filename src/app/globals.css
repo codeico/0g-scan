@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 /* === GLOBAL RESET === */
 *,
@@ -176,11 +178,11 @@ button:disabled {
   transition: color 0.2s, border-color 0.2s;
 }
 .tab-button:hover {
-  color: #00ff99;
+  color: #999;
 }
 .tab-button.active {
-  color: #00ff99;
-  border-color: #00ff99;
+  color: #999;
+  border-color: #999;
 }
 .tab-content {
   padding: 1rem;
@@ -237,11 +239,11 @@ button:disabled {
   border-bottom: 2px solid transparent;
 }
 .token-tab-button:hover {
-  color: #00ff99;
+  color: #1f2221;
 }
 .token-tab-button.active {
-  color: #00ff99;
-  border-color: #00ff99;
+  color: #1f2221;
+  border-color: #1f2221;
 }
 .token-card {
   background-color: #161b22;
@@ -485,10 +487,141 @@ button:disabled {
 }
 /* Tambahkan margin antar section agar tidak saling menempel */
 .section + .section {
-  margin-top: 2rem; /* atau 3rem, sesuai preferensi */
+  margin-top: 3rem; /* atau 3rem, sesuai preferensi */
 }
 
 /* Optional: agar semua section punya margin bawah juga */
 .section {
   margin-bottom: 2rem;
 }
+
+
+
+/* === ENHANCEMENTS START === */
+
+/* Import Inter font */
+
+
+/* Override base font */
+body {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+}
+
+/* Improved Link Style */
+a {
+  color: #58a6ff;
+  transition: color 0.3s ease;
+}
+a:hover {
+  color: #1f6feb;
+}
+
+/* Enhanced Button Style */
+button {
+  background-color: #515251;
+  color: #fff;
+  padding: 0.5rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #1f2221;
+}
+
+/* Input focus improvements */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.4);
+}
+
+/* Responsive Grid Enhancements */
+.responsive-grid,
+.stats-grid,
+.network-grid {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Card Hover Enhancement */
+.card:hover,
+.stat-card:hover,
+.token-card:hover,
+.tx-card:hover {
+  background-color: #1c2129;
+}
+
+/* Text and Title Enhancements */
+.section-title,
+.tx-title,
+.token-title {
+  color: #58a6ff;
+}
+
+.copy-btn:hover {
+  color: #58a6ff;
+}
+
+.tab-button:hover,
+.tab-button.active {
+  color: #58a6ff;
+  border-color: #58a6ff;
+}
+
+/* === ENHANCEMENTS END === */
+
+/* === CHART SECTION STYLES === */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .chart-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.chart-card {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  color: #e6edf3;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.chart-card h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #ffffff;
+}
+
+.chart-card p {
+  font-size: 0.875rem;
+  color: #8b949e;
+  margin-bottom: 1rem;
+}
+
+.chart-card a {
+  font-size: 0.875rem;
+  color: #58a6ff;
+  text-decoration: none;
+}
+
+.chart-card a:hover {
+  text-decoration: underline;
+}
+
+.chart-tooltip {
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  color: #e6edf3;
+}
+
+/* === END CHART SECTION STYLES === */

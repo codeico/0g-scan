@@ -129,7 +129,7 @@ export default function AddressClientPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`pb-1 ${activeTab === tab ? 'text-[#00bfff] font-semibold border-b-2 border-[#00bfff]' : 'text-gray-400'}`}
+            className={`tab-button ${activeTab === tab ? 'text-[#00bfff] font-semibold border-b-2 border-[#00bfff]' : 'text-gray-400'}`}
           >
             {tab === 'transactions' ? 'Transactions' : tab === 'erc20' ? 'ERC20 Txns' : 'Token Holdings'}
           </button>

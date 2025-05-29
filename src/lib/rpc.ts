@@ -383,19 +383,45 @@ export async function getTokenDailyStats(address: string) {
   return json.result.list || []
 }
 export async function getStorageTxCount(from: string): Promise<number> {
-  const url = `https://chainscan-galileo.0g.ai/v1/transaction?accountAddress=${from}&limit=10&reverse=true&skip=0&to=0x3A0d1d67497Ad770d6f72e7f4B8F0BAbaa2A649C`
+  const limit = 100
+  const maxTx = 10000
+  const to = '0x3A0d1d67497Ad770d6f72e7f4B8F0BAbaa2A649C'
+  let skip = 0
+  let totalCount = 0
+  let hasMore = true
 
   try {
-    const res = await fetch(url)
-    if (!res.ok) throw new Error('Failed to fetch storage tx count')
+    while (hasMore && skip < maxTx) {
+      const url = `https://chainscan-galileo.0g.ai/v1/transaction?accountAddress=${from}&limit=${limit}&reverse=true&skip=${skip}&to=${to}`
+      const res = await fetch(url)
 
-    const data = await res.json()
-    return data?.result?.total ?? 0
+      if (!res.ok) throw new Error(`Failed to fetch tx at skip ${skip}`)
+
+      const data = await res.json()
+      const list = data?.result?.list ?? []
+
+      // Filter yang sesuai
+      const filtered = list.filter(
+        (tx: any) => tx.method === '0xae722e82' && tx.status === 0
+      )
+
+      totalCount += filtered.length
+
+      // Jika jumlah hasil kurang dari limit, artinya data habis
+      if (list.length < limit) {
+        hasMore = false
+      } else {
+        skip += limit
+      }
+    }
+
+    return totalCount
   } catch (err) {
     console.error('❌ getStorageTxCount error:', err)
     return 0
   }
 }
+
 export async function getMinerReward(address: string): Promise<string> {
   const url = `https://storagescan-galileo.0g.ai/api/miners/${address}?network=turbo`
 
