@@ -53,22 +53,17 @@ export default function StorageNavbar() {
         <div className="nav-links">
           <div
             className="nav-link-with-submenu"
-            onMouseEnter={() => setHoverMenu('blockchain')}
+            onMouseEnter={() => setHoverMenu('miner')}
             onMouseLeave={() => setHoverMenu(null)}
           >
             <span className="nav-link">
-              Blockchain <ChevronDown size={14} />
+              Storage Scan <ChevronDown size={14} />
             </span>
-            <div className={`submenu ${hoverMenu === 'blockchain' ? 'visible' : ''}`}>
+            <div className={`submenu ${hoverMenu === 'miner' ? 'visible' : ''}`}>
               <div className="submenu-column">
-                <div className="submenu-header">Blockchain</div>
-                <Link href="/blocks" className="submenu-link">Blocks</Link>
-                <Link href="/transactions" className="submenu-link">Transactions</Link>
-              </div>
-              <div className="submenu-column">
-                <div className="submenu-header">Contract</div>
-                <Link href="/contract/deploy" className="submenu-link">Contract Deployment</Link>
-                <Link href="/contract/verify" className="submenu-link">Contract Verification</Link>
+                <div className="submenu-header">Storage Scan</div>
+                <Link href="/miner/rank" className="submenu-link">Top Miner</Link>
+                <Link href="/miner/list" className="submenu-link">Miner List</Link>
               </div>
             </div>
           </div>
@@ -79,12 +74,9 @@ export default function StorageNavbar() {
         <div className="sidebar">
           <button className="close-btn" onClick={() => setIsOpen(false)}><X /></button>
           <div className="sidebar-section">
-            <span className="sidebar-label">Blockchain</span>
-            <Link href="/blocks" className="sidebar-link" onClick={() => setIsOpen(false)}>Blocks</Link>
-            <Link href="/transactions" className="sidebar-link" onClick={() => setIsOpen(false)}>Transactions</Link>
-            <span className="sidebar-label">Contract</span>
-            <Link href="/contract/deploy" className="sidebar-link" onClick={() => setIsOpen(false)}>Contract Deployment</Link>
-            <Link href="/contract/verify" className="sidebar-link" onClick={() => setIsOpen(false)}>Contract Verification</Link>
+            <span className="sidebar-label">Storage Scan</span>
+            <Link href="/miner/rank" className="sidebar-link" onClick={() => setIsOpen(false)}>Top Miner</Link>
+            <Link href="/miner/list" className="sidebar-link" onClick={() => setIsOpen(false)}>Miner List</Link>
           </div>
         </div>
       )}

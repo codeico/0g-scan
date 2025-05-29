@@ -128,6 +128,23 @@ export type ApiResponse = {
     list?: Transaction[]
   }
 }
+export type MinerInfo = {
+  miner: string
+  totalReward: string
+  winCount: number
+  miningAttempts: number
+  timestamp: number
+}
+
+export type MinerApiResponse = {
+  code: number
+  message: string
+  data: {
+    total: number
+    list: MinerInfo[]
+  }
+}
+
 
 export async function getLatestBlockNumber() {
   return await provider.getBlockNumber()
@@ -403,8 +420,6 @@ export async function getStorageTxCount(from: string): Promise<number> {
       const url = `https://chainscan-galileo.0g.ai/v1/transaction?accountAddress=${from}&limit=${limit}&reverse=true&skip=${skip}&to=${to}`
       const res = await fetch(url)
 
-      if (!res.ok) throw new Error(`Failed to fetch tx at skip ${skip}`)
-
       const data: ApiResponse = await res.json()
       const list = data.result?.list ?? []
 
@@ -571,5 +586,33 @@ export async function convertToEvmAddress(bech32: string): Promise<string> {
     return data?.result?.address || bech32
   } catch {
     return bech32
+  }
+}
+export async function getMinerRank(address: string): Promise<number | null> {
+  const url = `https://scan-devnet.0g.ai/api/miners?network=turbo&skip=0&limit=2000&sortField=total_reward`
+
+  try {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error('Failed to fetch miner list')
+
+    const data: MinerApiResponse = await res.json()
+    const list = data.data.list
+
+    const sorted = list
+    .slice()
+    .sort((a, b) => {
+      const aVal = BigInt(a.totalReward)
+      const bVal = BigInt(b.totalReward)
+      const diff = bVal - aVal
+      return diff > BigInt(0) ? 1 : diff < BigInt(0) ? -1 : 0
+    })
+  
+
+    const rank = sorted.findIndex(miner => miner.miner.toLowerCase() === address.toLowerCase())
+
+    return rank >= 0 ? rank + 1 : null
+  } catch (err) {
+    console.error('❌ getMinerRank error:', err)
+    return null
   }
 }

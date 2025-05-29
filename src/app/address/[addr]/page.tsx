@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoins, faWallet, faList, faServer, faCube } from '@fortawesome/free-solid-svg-icons'
+import { faCoins, faWallet, faList, faServer, faCube, faChartLine } from '@fortawesome/free-solid-svg-icons'
 import type { TokenHolding } from '@/lib/rpc'
 
 import {
@@ -13,6 +13,7 @@ import {
   getAddressTransactions,
   getStorageTxCount,
   getMinerReward,
+  getMinerRank,
   ERC20Tx,
   AddressDetail,
   NativeTx
@@ -30,7 +31,6 @@ function formatAge(secondsAgo: number) {
 
 type TabType = 'transactions' | 'erc20' | 'tokens'
 
-
 export default function AddressClientPage() {
   const { addr } = useParams() as { addr: string }
 
@@ -38,16 +38,14 @@ export default function AddressClientPage() {
   const [erc20Txs, setErc20Txs] = useState<ERC20Tx[]>([])
   const [erc20Total, setErc20Total] = useState(0)
   const [erc20Page, setErc20Page] = useState(0)
-
   const [nativeTxs, setNativeTxs] = useState<NativeTx[]>([])
   const [txTotal, setTxTotal] = useState(0)
   const [txPage, setTxPage] = useState(0)
-
   const [tokens, setTokens] = useState<TokenHolding[]>([])
   const [activeTab, setActiveTab] = useState<TabType>('transactions')
-
   const [storageCount, setStorageCount] = useState<number>(0)
   const [miningReward, setMiningReward] = useState<string>('0')
+  const [minerRank, setMinerRank] = useState<number | null>(null)
 
   const short = (str?: string) =>
     str && str.length >= 10 ? str.slice(0, 6) + '...' + str.slice(-4) : str || '-'
@@ -55,16 +53,18 @@ export default function AddressClientPage() {
   useEffect(() => {
     async function loadAddress() {
       try {
-        const [detail, heldTokens, storageTx, miner] = await Promise.all([
+        const [detail, heldTokens, storageTx, miner, rank] = await Promise.all([
           getAddressDetail(addr),
           getTokenHoldings(addr),
           getStorageTxCount(addr),
-          getMinerReward(addr)
+          getMinerReward(addr),
+          getMinerRank(addr)
         ])
         setAddressDetail(detail)
         setTokens(heldTokens)
         setStorageCount(storageTx)
         setMiningReward(miner)
+        setMinerRank(rank)
       } catch (e) {
         console.error('Failed to fetch address info', e)
       }
@@ -113,6 +113,7 @@ export default function AddressClientPage() {
           { label: 'Nonce', value: addressDetail?.nonce ?? '...', icon: faList, color: 'text-pink-400' },
           { label: 'Storage Txns', value: storageCount, icon: faServer, color: 'text-purple-400' },
           { label: 'Mining Reward', value: (Number(miningReward) / 1e18).toFixed(4) + ' 0G', icon: faCube, color: 'text-green-400' },
+          { label: 'Miner Rank', value: minerRank ? `#${minerRank}` : '-', icon: faChartLine, color: 'text-red-400' },
         ].map((item, i) => (
           <div key={i} className="card flex items-center justify-between">
             <div>
