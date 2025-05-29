@@ -154,7 +154,8 @@ export default function AddressClientPage() {
             <tbody>
               {nativeTxs.map((tx, i) => (
                 <tr key={`${tx.hash}-${i}`} className="border-t border-[#30363d] hover:bg-[#0d1117]">
-                  <td className="px-4 py-2 text-blue-400"><Link href={`/tx/${tx.hash}`} className="hover:underline">{short(tx.hash)}</Link></td>
+                  <td className="px-4 py-2 text-blue-400">
+                    <Link href={`/tx/${tx.hash}`} className="hover:underline">{short(tx.hash)}</Link></td>
                   <td className="px-4 py-2 text-yellow-400">{tx.method || '-'}</td>
                   <td className="px-4 py-2"><Link href={`/block/${tx.epochNumber}`} className="hover:underline">{tx.epochNumber}</Link></td>
                   <td className="px-4 py-2"><Link href={`/address/${tx.from}`} className="hover:underline">{short(tx.from)}</Link></td>
