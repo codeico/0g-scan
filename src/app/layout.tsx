@@ -23,8 +23,8 @@ const retroFont = Press_Start_2P({
 
 // Metadata
 export const metadata: Metadata = {
-  title: "OG Explorer",
-  description: "Blockchain Explorer for 0G",
+  title: "OG BlockChain Explorer",
+  description: "BlockChain Explorer for 0G Network",
 };
 
 // Root Layout
