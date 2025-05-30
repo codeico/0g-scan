@@ -23,7 +23,8 @@ export default function TopMinersPage() {
       try {
         const res = await fetch('https://scan-devnet.0g.ai/api/stats/top/reward?network=turbo')
         const data = await res.json()
-        setMiners(data.data.list || [])
+        const sorted = data.data.list.sort((a: Miner, b: Miner) => a.rank - b.rank)
+        setMiners(sorted)
       } catch (err) {
         console.error('Failed to fetch miners', err)
       } finally {
@@ -43,7 +44,7 @@ export default function TopMinersPage() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="card overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead className="text-[#00bfff] border-b border-[#30363d]">
               <tr>
@@ -59,7 +60,6 @@ export default function TopMinersPage() {
                 const percentage = miner.miningAttempts > 0
                   ? (miner.winCount / miner.miningAttempts) * 100
                   : 0
-                const barWidth = (percentage / 100) * 140
 
                 return (
                   <tr key={miner.rank} className="border-t border-[#30363d] hover:bg-[#0d1117]">
@@ -69,18 +69,22 @@ export default function TopMinersPage() {
                         {miner.miner}
                       </Link>
                     </td>
-                    <td className="px-4 py-2 text-[#00ff99]">{(Number(miner.totalReward) / 1e18).toFixed(4)} 0G</td>
+                    <td className="px-4 py-2 text-[#00ff99]">
+                      {(Number(miner.totalReward) / 1e18).toFixed(4)} 0G
+                    </td>
                     <td className="px-4 py-2">
-  <div className="win-bar-container">
-    <div className="win-bar-track">
-      <div
-        className="win-bar-fill"
-        style={{ width: `${barWidth}px` }}
-      ></div>
-    </div>
-    <p className="win-bar-label">{miner.winCount} ({percentage.toFixed(2)}%)</p>
-  </div>
-</td>
+                      <div className="flex flex-row items-center gap-1.5">
+                        <div className="w-[140px] h-1.5 rounded-[20px] bg-[#b4b4b4] overflow-hidden flex flex-row justify-start items-center">
+                          <div
+                            className="h-full rounded-[20px] bg-blue-500"
+                            style={{ width: `${percentage.toFixed(2)}%` }}
+                          ></div>
+                        </div>
+                        <p className="text-[#b4b4b4] text-sm">
+                          {miner.winCount} ({percentage.toFixed(2)}%)
+                        </p>
+                      </div>
+                    </td>
                     <td className="px-4 py-2">{miner.miningAttempts}</td>
                   </tr>
                 )
