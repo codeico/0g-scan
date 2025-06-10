@@ -145,7 +145,6 @@ export default function Header({ walletAddress }: HeaderProps) {
                 priority
               />
             </div>
-            <span className="logo-text">OG Explorer</span>
           </Link>
 
           {/* Search Bar */}
