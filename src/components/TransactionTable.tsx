@@ -35,55 +35,65 @@ export default function TransactionTable() {
   }
 
   return (
-    <section className="bg-[#161b22] border border-[#30363d] text-[#e6edf3] p-4 rounded-xl shadow">
+    <div style={{ padding: '2rem' }}>
       {loading ? (
-        <p className="text-sm text-gray-400">Loading transactions...</p>
+        <p className="loading" style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+          Loading transactions...
+        </p>
       ) : txs.length === 0 ? (
-        <p className="text-sm text-red-400">No transactions found.</p>
+        <p style={{ fontSize: '0.875rem', color: 'var(--accent-pink)' }}>
+          No transactions found.
+        </p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm table-auto">
-            <thead className="text-[#ff66cc]">
-              <tr className="border-b border-[#30363d]">
-                <th className="py-2 px-2 text-left">Tx Hash</th>
-                <th className="py-2 px-2 text-left">From</th>
-                <th className="py-2 px-2 text-left">To</th>
-                <th className="py-2 px-2 text-left">Value</th>
-                <th className="py-2 px-2 text-left">Gas</th>
-                <th className="py-2 px-2 text-left">Age</th>
+        <div style={{ overflowX: 'auto' }}>
+          <table>
+            <thead>
+              <tr>
+                <th>Tx Hash</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Value</th>
+                <th>Gas</th>
+                <th>Age</th>
               </tr>
             </thead>
             <tbody>
               {txs.map((tx) => (
-                <tr key={tx.hash} className="border-b border-[#30363d] hover:bg-[#1f2937]">
-                  <td className="py-2 px-2 text-blue-400">
-                    <Link href={`/tx/${tx.hash}`} className="hover:underline">
+                <tr key={tx.hash}>
+                  <td>
+                    <Link href={`/tx/${tx.hash}`}>
                       {tx.hash.slice(0, 10)}...
                     </Link>
                   </td>
-                  <td className="py-2 px-2 text-[#00bfff]">
-                    <Link href={`/address/${tx.from}`} className="hover:underline">
+                  <td style={{ color: 'var(--accent-cyan)' }}>
+                    <Link href={`/address/${tx.from}`}>
                       {tx.from.slice(0, 10)}...
                     </Link>
                   </td>
-                  <td className="py-2 px-2 text-[#00ff99]">
+                  <td style={{ color: 'var(--accent-emerald)' }}>
                     {tx.to ? (
-                      <Link href={`/address/${tx.to}`} className="hover:underline">
+                      <Link href={`/address/${tx.to}`}>
                         {tx.to.slice(0, 10)}...
                       </Link>
                     ) : (
-                      <span className="italic text-gray-400">Contract Creation</span>
+                      <span style={{ fontStyle: 'italic', color: 'var(--text-secondary)' }}>
+                        Contract Creation
+                      </span>
                     )}
                   </td>
-                  <td className="py-2 px-2">{(Number(tx.value) / 1e18).toFixed(4)} 0G</td>
-                  <td className="py-2 px-2 text-[#ffcc00]">{(Number(tx.gasFee) / 1e18).toFixed(6)} 0G</td>
-                  <td className="py-2 px-2 text-gray-400">{formatAge(tx.timestamp)}</td>
+                  <td>{(Number(tx.value) / 1e18).toFixed(4)} 0G</td>
+                  <td style={{ color: 'var(--accent-amber)' }}>
+                    {(Number(tx.gasFee) / 1e18).toFixed(6)} 0G
+                  </td>
+                  <td style={{ color: 'var(--text-muted)' }}>
+                    {formatAge(tx.timestamp)}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
-    </section>
+    </div>
   )
 }

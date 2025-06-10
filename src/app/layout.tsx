@@ -45,10 +45,8 @@ export default function RootLayout({
           text-[#e6edf3]
         `}
       >
-        <div className="page-container">
           <Header />
           {children}
-        </div>
       </body>
     </html>
   );

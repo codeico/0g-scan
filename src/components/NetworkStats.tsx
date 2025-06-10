@@ -54,8 +54,6 @@ export default function NetworkStats() {
     }
   
     loadStats()
-  
-    // ✅ fix here: langsung inisialisasi saat deklarasi
     const interval = setInterval(loadStats, 3000)
   
     return () => clearInterval(interval)

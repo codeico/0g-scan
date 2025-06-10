@@ -36,52 +36,94 @@ export default function ChartSection() {
       .then(setAccountData)
   }, [])
 
+  const customTooltipStyle = {
+    backgroundColor: 'var(--bg-card)',
+    border: '1px solid var(--border-primary)',
+    borderRadius: '12px',
+    color: 'var(--text-primary)',
+    boxShadow: 'var(--shadow-md)'
+  }
+
+  const customLabelStyle = {
+    color: 'var(--text-primary)'
+  }
+
   return (
     <div className="chart-grid">
       {/* Txn Count Chart */}
       <div className="chart-card">
-        <div className="flex justify-between items-center mb-2">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div>
             <h2>Txn Count</h2>
             <p>The total number of transactions per day on the 0G network.</p>
           </div>
-          <a href="#">View Details</a>
+          <a href="#" style={{ fontSize: '0.875rem' }}>View Details</a>
         </div>
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={txnData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#30363d" />
-            <XAxis dataKey="statTime" tickFormatter={date => date.slice(5, 10)} stroke="#8b949e" />
-            <YAxis tickFormatter={v => `${(v / 1_000_000).toFixed(0)}M`} stroke="#8b949e" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
+            <XAxis 
+              dataKey="statTime" 
+              tickFormatter={date => date.slice(5, 10)} 
+              stroke="var(--text-secondary)" 
+              fontSize={12}
+            />
+            <YAxis 
+              tickFormatter={v => `${(v / 1_000_000).toFixed(0)}M`} 
+              stroke="var(--text-secondary)" 
+              fontSize={12}
+            />
             <Tooltip
-              contentStyle={{ backgroundColor: '#0d1117', border: '1px solid #30363d', color: '#fff' }}
-              labelStyle={{ color: '#fff' }}
+              contentStyle={customTooltipStyle}
+              labelStyle={customLabelStyle}
               wrapperClassName="chart-tooltip"
             />
-            <Line type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} dot={false} />
+            <Line 
+              type="monotone" 
+              dataKey="count" 
+              stroke="var(--accent-blue)" 
+              strokeWidth={2} 
+              dot={false} 
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       {/* Account Growth Chart */}
       <div className="chart-card">
-        <div className="flex justify-between items-center mb-2">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
           <div>
             <h2>Account Growth</h2>
             <p>The number of new accounts added per day on the 0G network.</p>
           </div>
-          <a href="#">View Details</a>
+          <a href="#" style={{ fontSize: '0.875rem' }}>View Details</a>
         </div>
         <ResponsiveContainer width="100%" height={250}>
           <LineChart data={accountData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#30363d" />
-            <XAxis dataKey="statTime" tickFormatter={date => date.slice(5, 10)} stroke="#8b949e" />
-            <YAxis tickFormatter={v => `${(v / 1000).toFixed(0)}k`} stroke="#8b949e" />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border-primary)" />
+            <XAxis 
+              dataKey="statTime" 
+              tickFormatter={date => date.slice(5, 10)} 
+              stroke="var(--text-secondary)" 
+              fontSize={12}
+            />
+            <YAxis 
+              tickFormatter={v => `${(v / 1000).toFixed(0)}k`} 
+              stroke="var(--text-secondary)" 
+              fontSize={12}
+            />
             <Tooltip
-              contentStyle={{ backgroundColor: '#0d1117', border: '1px solid #30363d', color: '#fff' }}
-              labelStyle={{ color: '#fff' }}
+              contentStyle={customTooltipStyle}
+              labelStyle={customLabelStyle}
               wrapperClassName="chart-tooltip"
             />
-            <Line type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} dot={false} />
+            <Line 
+              type="monotone" 
+              dataKey="count" 
+              stroke="var(--accent-cyan)" 
+              strokeWidth={2} 
+              dot={false} 
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>

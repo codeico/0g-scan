@@ -96,8 +96,7 @@ export default function AddressClientPage() {
   }, [addr, erc20Page, activeTab])
 
   return (
-
-    <main className="p-6 max-w-7xl mx-auto text-white">
+    <main className="page-container">
       <h2 className="address-title">Address</h2>
       <div className="address-bar">
         <span className="address-hash">{addr}</span>
@@ -106,148 +105,221 @@ export default function AddressClientPage() {
         </button>
       </div>
 
-      <div className="responsive-grid mb-6">
+      <div className="stats-grid">
         {[
-          { label: 'Balance', value: addressDetail ? (Number(addressDetail.balance) / 1e18).toFixed(3) + ' 0G' : '...', icon: faWallet, color: 'text-yellow-400' },
-          { label: 'Tokens', value: tokens.length, icon: faCoins, color: 'text-cyan-400' },
-          { label: 'Nonce', value: addressDetail?.nonce ?? '...', icon: faList, color: 'text-pink-400' },
-          { label: 'Storage Txns', value: storageCount, icon: faServer, color: 'text-purple-400' },
-          { label: 'Mining Reward', value: (Number(miningReward) / 1e18).toFixed(4) + ' 0G', icon: faCube, color: 'text-green-400' },
-          { label: 'Miner Rank', value: minerRank ? `#${minerRank}` : '-', icon: faChartLine, color: 'text-red-400' },
+          { 
+            label: 'Balance', 
+            value: addressDetail ? (Number(addressDetail.balance) / 1e18).toFixed(3) + ' 0G' : '...', 
+            icon: faWallet, 
+            colorClass: 'text-yellow-400' 
+          },
+          { 
+            label: 'Tokens', 
+            value: tokens.length, 
+            icon: faCoins, 
+            colorClass: 'text-cyan-400' 
+          },
+          { 
+            label: 'Nonce', 
+            value: addressDetail?.nonce ?? '...', 
+            icon: faList, 
+            colorClass: 'text-pink-400' 
+          },
+          { 
+            label: 'Storage Txns', 
+            value: storageCount, 
+            icon: faServer, 
+            colorClass: 'text-purple-400' 
+          },
+          { 
+            label: 'Mining Reward', 
+            value: (Number(miningReward) / 1e18).toFixed(4) + ' 0G', 
+            icon: faCube, 
+            colorClass: 'text-green-400' 
+          },
+          { 
+            label: 'Miner Rank', 
+            value: minerRank ? `#${minerRank}` : '-', 
+            icon: faChartLine, 
+            colorClass: 'text-red-400' 
+          },
         ].map((item, i) => (
-          <div key={i} className="card flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">{item.label}</p>
-              <p className="text-2xl font-semibold text-white">{item.value}</p>
+          <div key={i} className="stat-card">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="stat-title">{item.label}</p>
+                <p className="stat-value">{item.value}</p>
+              </div>
+              <FontAwesomeIcon icon={item.icon} className={`text-3xl ${item.colorClass}`} />
             </div>
-            <FontAwesomeIcon icon={item.icon} className={`text-3xl ${item.color}`} />
           </div>
         ))}
       </div>
 
-      <div className="flex gap-4 border-b border-[#30363d] mb-4">
-        {(['transactions', 'erc20', 'tokens'] as const).map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`tab-button ${activeTab === tab ? 'text-[#00bfff] font-semibold border-b-2 border-[#00bfff]' : 'text-gray-400'}`}
-          >
-            {tab === 'transactions' ? 'Transactions' : tab === 'erc20' ? 'ERC20 Txns' : 'Token Holdings'}
-          </button>
-        ))}
-      </div>
-
-      {activeTab === 'transactions' && (
-        <div className="card overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="text-[#00bfff]">
-              <tr>
-                <th className="px-4 py-2">Txn Hash</th>
-                <th className="px-4 py-2">Method</th>
-                <th className="px-4 py-2">Block</th>
-                <th className="px-4 py-2">From</th>
-                <th className="px-4 py-2">To</th>
-                <th className="px-4 py-2">Gas</th>
-                <th className="px-4 py-2">Age</th>
-              </tr>
-            </thead>
-            <tbody>
-              {nativeTxs.map((tx, i) => (
-                <tr key={`${tx.hash}-${i}`} className="border-t border-[#30363d] hover:bg-[#0d1117]">
-                  <td className="px-4 py-2 text-blue-400">
-                    <Link href={`/tx/${tx.hash}`} className="hover:underline">{short(tx.hash)}</Link></td>
-                  <td className="px-4 py-2 text-yellow-400">{tx.method || '-'}</td>
-                  <td className="px-4 py-2"><Link href={`/block/${tx.epochNumber}`} className="hover:underline">{tx.epochNumber}</Link></td>
-                  <td className="px-4 py-2"><Link href={`/address/${tx.from}`} className="hover:underline">{short(tx.from)}</Link></td>
-                  <td className="px-4 py-2"><Link href={`/address/${tx.to}`} className="hover:underline">{short(tx.to)}</Link></td>
-                  <td className="px-4 py-2 text-[#00ff99]">{(Number(tx.gasFee) / 1e18).toFixed(6)} 0G</td>
-                  <td className="px-4 py-2 text-gray-400">
-                    {tx.timestamp ? `${formatAge(Math.floor(Date.now() / 1000 - tx.timestamp))} ago` : '-'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="flex justify-between items-center mt-4">
+      <div className="tab-section">
+        <div className="tab-header">
+          {(['transactions', 'erc20', 'tokens'] as const).map(tab => (
             <button
-              className="text-sm text-white px-3 py-1 rounded border border-[#30363d] hover:bg-[#1f2937]"
-              disabled={txPage === 0}
-              onClick={() => setTxPage(p => Math.max(p - 1, 0))}
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`tab-button ${activeTab === tab ? 'active' : ''}`}
             >
-              Previous
+              {tab === 'transactions' ? 'Transactions' : tab === 'erc20' ? 'ERC20 Txns' : 'Token Holdings'}
             </button>
-            <span className="text-sm text-gray-400">Page {txPage + 1} of {Math.ceil(txTotal / 10)}</span>
-            <button
-              className="text-sm text-white px-3 py-1 rounded border border-[#30363d] hover:bg-[#1f2937]"
-              disabled={(txPage + 1) * 10 >= txTotal}
-              onClick={() => setTxPage(p => p + 1)}
-            >
-              Next
-            </button>
-          </div>
+          ))}
         </div>
-      )}
 
-      {activeTab === 'erc20' && (
-        <div className="card overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="text-[#00bfff]">
-              <tr>
-                <th className="px-4 py-2">Txn Hash</th>
-                <th className="px-4 py-2">Block</th>
-                <th className="px-4 py-2">From</th>
-                <th className="px-4 py-2">To</th>
-                <th className="px-4 py-2">Qty</th>
-                <th className="px-4 py-2">Token</th>
-                <th className="px-4 py-2">Age</th>
-              </tr>
-            </thead>
-            <tbody>
-              {erc20Txs.map((tx, i) => {
-                const qty = (Number(tx.value) / 10 ** tx.decimals).toFixed(4)
-                return (
-                  <tr key={`${tx.hash}-${i}`} className="border-t border-[#30363d] hover:bg-[#0d1117]">
-                    <td className="px-4 py-2 text-blue-400">
-                      <Link href={`/tx/${tx.hash}`} className="hover:underline">{short(tx.hash)}</Link>
-                    </td>
-                    <td className="px-4 py-2"><Link href={`/block/${tx.block}`} className="hover:underline">{tx.block}</Link></td>
-                    <td className="px-4 py-2"><Link href={`/address/${tx.from}`} className="hover:underline">{short(tx.from)}</Link></td>
-                    <td className="px-4 py-2"><Link href={`/address/${tx.to}`} className="hover:underline">{short(tx.to)}</Link></td>
-                    <td className="px-4 py-2 text-[#00ff99]">{qty}</td>
-                    <td className="px-4 py-2 text-yellow-400"><Link href={`/token/${tx.tokenAddress}`} className="hover:underline">{short(tx.name)}</Link></td>
-                    <td className="px-4 py-2 text-gray-400">
-                      {tx.timestamp ? `${formatAge(Math.floor(Date.now() / 1000 - tx.timestamp))} ago` : '-'}
-                    </td>
+        <div className="tab-content">
+          {activeTab === 'transactions' && (
+            <div className="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Txn Hash</th>
+                    <th>Method</th>
+                    <th>Block</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Gas</th>
+                    <th>Age</th>
                   </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                </thead>
+                <tbody>
+                  {nativeTxs.map((tx, i) => (
+                    <tr key={`${tx.hash}-${i}`}>
+                      <td>
+                        <Link href={`/tx/${tx.hash}`} className="text-blue-400 hover:underline">
+                          {short(tx.hash)}
+                        </Link>
+                      </td>
+                      <td className="text-yellow-400">{tx.method || '-'}</td>
+                      <td>
+                        <Link href={`/block/${tx.epochNumber}`} className="hover:underline">
+                          {tx.epochNumber}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link href={`/address/${tx.from}`} className="hover:underline">
+                          {short(tx.from)}
+                        </Link>
+                      </td>
+                      <td>
+                        <Link href={`/address/${tx.to}`} className="hover:underline">
+                          {short(tx.to)}
+                        </Link>
+                      </td>
+                      <td className="text-emerald-400">
+                        {(Number(tx.gasFee) / 1e18).toFixed(6)} 0G
+                      </td>
+                      <td className="text-gray-400">
+                        {tx.timestamp ? `${formatAge(Math.floor(Date.now() / 1000 - tx.timestamp))} ago` : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-          <div className="flex justify-between items-center mt-4">
-            <button
-              className="text-sm text-white px-3 py-1 rounded border border-[#30363d] hover:bg-[#1f2937]"
-              disabled={erc20Page === 0}
-              onClick={() => setErc20Page(p => Math.max(p - 1, 0))}
-            >
-              Previous
-            </button>
-            <span className="text-sm text-gray-400">Page {erc20Page + 1} of {Math.ceil(erc20Total / 10)}</span>
-            <button
-              className="text-sm text-white px-3 py-1 rounded border border-[#30363d] hover:bg-[#1f2937]"
-              disabled={(erc20Page + 1) * 10 >= erc20Total}
-              onClick={() => setErc20Page(p => p + 1)}
-            >
-              Next
-            </button>
-          </div>
+              <div className="flex justify-between items-center mt-6 px-4">
+                <button
+                  disabled={txPage === 0}
+                  onClick={() => setTxPage(p => Math.max(p - 1, 0))}
+                >
+                  Previous
+                </button>
+                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  Page {txPage + 1} of {Math.ceil(txTotal / 10)}
+                </span>
+                <button
+                  disabled={(txPage + 1) * 10 >= txTotal}
+                  onClick={() => setTxPage(p => p + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'erc20' && (
+            <div className="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Txn Hash</th>
+                    <th>Block</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Qty</th>
+                    <th>Token</th>
+                    <th>Age</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {erc20Txs.map((tx, i) => {
+                    const qty = (Number(tx.value) / 10 ** tx.decimals).toFixed(4)
+                    return (
+                      <tr key={`${tx.hash}-${i}`}>
+                        <td>
+                          <Link href={`/tx/${tx.hash}`} className="text-blue-400 hover:underline">
+                            {short(tx.hash)}
+                          </Link>
+                        </td>
+                        <td>
+                          <Link href={`/block/${tx.block}`} className="hover:underline">
+                            {tx.block}
+                          </Link>
+                        </td>
+                        <td>
+                          <Link href={`/address/${tx.from}`} className="hover:underline">
+                            {short(tx.from)}
+                          </Link>
+                        </td>
+                        <td>
+                          <Link href={`/address/${tx.to}`} className="hover:underline">
+                            {short(tx.to)}
+                          </Link>
+                        </td>
+                        <td className="text-emerald-400">{qty}</td>
+                        <td className="text-yellow-400">
+                          <Link href={`/token/${tx.tokenAddress}`} className="hover:underline">
+                            {short(tx.name)}
+                          </Link>
+                        </td>
+                        <td className="text-gray-400">
+                          {tx.timestamp ? `${formatAge(Math.floor(Date.now() / 1000 - tx.timestamp))} ago` : '-'}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+
+              <div className="flex justify-between items-center mt-6 px-4">
+                <button
+                  disabled={erc20Page === 0}
+                  onClick={() => setErc20Page(p => Math.max(p - 1, 0))}
+                >
+                  Previous
+                </button>
+                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  Page {erc20Page + 1} of {Math.ceil(erc20Total / 10)}
+                </span>
+                <button
+                  disabled={(erc20Page + 1) * 10 >= erc20Total}
+                  onClick={() => setErc20Page(p => p + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'tokens' && (
+            <div className="p-4">
+              <TokenTable tokens={tokens} />
+            </div>
+          )}
         </div>
-      )}
-
-      {activeTab === 'tokens' && (
-          <TokenTable tokens={tokens} />
-      )}
+      </div>
     </main>
   )
 }
