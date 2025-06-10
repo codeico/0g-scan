@@ -56,16 +56,8 @@ export default function HomePage() {
       <footer className="relative z-10 border-t border-[#30363d] bg-[#161b22]/80 backdrop-blur-sm mt-20">
         <div className="max-w-[1400px] mx-auto px-6 py-12">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gradient mb-4">0G Network Explorer</div>
-            <p className="text-[#8b949e] mb-6">
-              Built with modern web technologies for the next generation blockchain
-            </p>
             <div className="flex justify-center gap-6 text-sm text-[#656d76]">
-              <span>© 2024 0G Network</span>
-              <span>•</span>
-              <span>Powered by Next.js</span>
-              <span>•</span>
-              <span>Real-time API</span>
+              <div className="text-2xl font-bold text-gradient mb-4">0G Network Explorer</div>
             </div>
           </div>
         </div>
