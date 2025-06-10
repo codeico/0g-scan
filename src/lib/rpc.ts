@@ -164,7 +164,7 @@ export async function getBlockByNumber(blockNumber: number) {
 
 export async function getLatestBlocks(count: number = 10): Promise<Block[]> {
   const t = Date.now()
-  const url = `https://47.86.103.93/v1/block?limit=${count}&skip=0&t=${t}&tab=blocks`
+  const url = `https://chainscan-galileo.0g.ai/v1/block?limit=${count}&skip=0&t=${t}&tab=blocks`
 
   const res = await fetch(url)
   const json = await res.json()
@@ -183,7 +183,7 @@ export async function getTransactionWithReceipt(hash: string): Promise<TxWithRec
   }
 
   try {
-    const res = await fetch(`https://47.86.103.93/v1/transaction/${hash}`)
+    const res = await fetch(`https://chainscan-galileo.0g.ai/v1/transaction/${hash}`)
     if (!res.ok) {
       console.error('❌ HTTP error fetching transaction:', res.status, res.statusText)
       return { tx: null, receipt: null }
@@ -270,14 +270,14 @@ export async function getTxChartData(count: number = 10) {
   }))
 }
 export async function getAddressDetail(address: string) {
-  const url = `https://47.86.103.93/v1/account/${address}?fields=cfxTransferCount&fields=erc20TransferCount&fields=erc721TransferCount&fields=erc1155TransferCount&fields=stakingBalance`
+  const url = `https://chainscan-galileo.0g.ai/v1/account/${address}?fields=cfxTransferCount&fields=erc20TransferCount&fields=erc721TransferCount&fields=erc1155TransferCount&fields=stakingBalance`
   const res = await fetch(url)
   const json = await res.json()
   return json.result
 }
 
 export async function getAddressTransactions(address: string, limit = 10, skip = 0) {
-  const url = `https://47.86.103.93/v1/transaction?accountAddress=${address}&limit=${limit}&skip=${skip}&tab=transaction`
+  const url = `https://chainscan-galileo.0g.ai/v1/transaction?accountAddress=${address}&limit=${limit}&skip=${skip}&tab=transaction`
 
   try {
     const res = await fetch(url)
@@ -295,7 +295,7 @@ export async function getAddressTransactions(address: string, limit = 10, skip =
 }
 
 export async function getERC20Transfers(address: string, limit = 10, skip = 0): Promise<{ list: ERC20Tx[], total: number }> {
-  const url = `http://47.86.103.93/v1/transfer?accountAddress=${address}&limit=${limit}&skip=${skip}&tab=transfers-ERC20&transferType=ERC20`
+  const url = `https://chainscan-galileo.0g.ai/v1/transfer?accountAddress=${address}&limit=${limit}&skip=${skip}&tab=transfers-ERC20&transferType=ERC20`
 
   try {
     const res = await fetch(url)
@@ -349,7 +349,7 @@ export type TokenHolding = {
 }
 
 export async function getTokenHoldings(address: string): Promise<TokenHolding[]> {
-  const url = `https://47.86.103.93/v1/token?accountAddress=${address}&fields=iconUrl`
+  const url = `https://chainscan-galileo.0g.ai/v1/token?accountAddress=${address}&fields=iconUrl`
 
   try {
     const res = await fetch(url)
@@ -380,7 +380,7 @@ export async function getTokenHoldings(address: string): Promise<TokenHolding[]>
 }
 
 export async function getTokenContractDetail(address: string) {
-  const url = `https://47.86.103.93/v1/contract/${address}?fields=name&fields=iconUrl&fields=sponsor&fields=admin&fields=from&fields=website&fields=transactionHash&fields=cfxTransferCount&fields=erc20TransferCount&fields=erc721TransferCount&fields=erc1155TransferCount&fields=stakingBalance&fields=sourceCode&fields=abi&fields=isRegistered&fields=verifyInfo`
+  const url = `https://chainscan-galileo.0g.ai/v1/contract/${address}?fields=name&fields=iconUrl&fields=sponsor&fields=admin&fields=from&fields=website&fields=transactionHash&fields=cfxTransferCount&fields=erc20TransferCount&fields=erc721TransferCount&fields=erc1155TransferCount&fields=stakingBalance&fields=sourceCode&fields=abi&fields=isRegistered&fields=verifyInfo`
 
   const res = await fetch(url, { next: { revalidate: 60 } })
   if (!res.ok) throw new Error('Failed to fetch token contract detail')
@@ -389,7 +389,7 @@ export async function getTokenContractDetail(address: string) {
 }
 
 export async function getTokenByAddress(address: string) {
-  const url = `https://47.86.103.93/stat/tokens/by-address?address=${address}&fields=iconUrl&fields=transferCount&fields=price&fields=totalPrice&fields=quoteUrl`
+  const url = `https://chainscan-galileo.0g.ai/stat/tokens/by-address?address=${address}&fields=iconUrl&fields=transferCount&fields=price&fields=totalPrice&fields=quoteUrl`
 
   try {
     const res = await fetch(url)
@@ -402,7 +402,7 @@ export async function getTokenByAddress(address: string) {
 }
 
 export async function getTokenHolders(tokenAddress: string, limit = 10, skip = 0) {
-  const url = `https://47.86.103.93/stat/tokens/holder-rank?address=${tokenAddress}&limit=${limit}&orderBy=balance&reverse=true&skip=${skip}&tab=holders`
+  const url = `https://chainscan-galileo.0g.ai/stat/tokens/holder-rank?address=${tokenAddress}&limit=${limit}&orderBy=balance&reverse=true&skip=${skip}&tab=holders`
 
   try {
     const res = await fetch(url)
@@ -415,7 +415,7 @@ export async function getTokenHolders(tokenAddress: string, limit = 10, skip = 0
 }
 
 export async function getTokenTransfers(tokenAddress: string, limit = 10, skip = 0) {
-  const url = `https://47.86.103.93/v1/transfer?address=${tokenAddress}&limit=${limit}&skip=${skip}&tab=transfers&transferType=ERC20`
+  const url = `https://chainscan-galileo.0g.ai/v1/transfer?address=${tokenAddress}&limit=${limit}&skip=${skip}&tab=transfers&transferType=ERC20`
 
   try {
     const res = await fetch(url)
@@ -428,7 +428,7 @@ export async function getTokenTransfers(tokenAddress: string, limit = 10, skip =
 }
 
 export async function getTokenDailyStats(address: string) {
-  const url = `https://47.86.103.93/stat/daily-token-stat?limit=365&intervalType=day&base32=${address}`
+  const url = `https://chainscan-galileo.0g.ai/stat/daily-token-stat?limit=365&intervalType=day&base32=${address}`
   const res = await fetch(url)
   const json = await res.json()
   return json.result.list || []
@@ -443,7 +443,7 @@ export async function getStorageTxCount(from: string): Promise<number> {
 
   try {
     while (hasMore && skip < maxTx) {
-      const url = `https://47.86.103.93/v1/transaction?accountAddress=${from}&limit=${limit}&reverse=true&skip=${skip}&to=${to}`
+      const url = `https://chainscan-galileo.0g.ai/v1/transaction?accountAddress=${from}&limit=${limit}&reverse=true&skip=${skip}&to=${to}`
       const res = await fetch(url)
 
       const data: ApiResponse = await res.json()
@@ -485,21 +485,21 @@ export async function getMinerReward(address: string): Promise<string> {
 }
 
 export async function getNetworkDashboard() {
-  const res = await fetch('https://47.86.103.93/v1/homeDashboard')
+  const res = await fetch('https://chainscan-galileo.0g.ai/v1/homeDashboard')
   if (!res.ok) throw new Error('Failed to fetch home dashboard')
   const json = await res.json()
   return json.result
 }
 
 export async function getLatestPlotStats() {
-  const res = await fetch('https://47.86.103.93/v1/plot?interval=133&limit=7')
+  const res = await fetch('https://chainscan-galileo.0g.ai/v1/plot?interval=133&limit=7')
   if (!res.ok) throw new Error('Failed to fetch plot stats')
   const json = await res.json()
   return json.result?.list?.at(-1)
 }
 export async function getGasPriceInfo() {
   try {
-    const res = await fetch('https://47.86.103.93/stat/gasprice/tracker')
+    const res = await fetch('https://chainscan-galileo.0g.ai/stat/gasprice/tracker')
     if (!res.ok) throw new Error('Failed to fetch gas price info')
     const json = await res.json()
     return json.result.gasPriceInfo || {}
@@ -515,7 +515,7 @@ export async function getLatestTransactions(limit = 10, skip = 0) {
   today.setUTCHours(0, 0, 0, 0)
   const t = today.getTime() // timestamp UTC today 00:00
 
-  const url = `https://47.86.103.93/v1/transaction?limit=${limit}&skip=${skip}&t=${t}&tab=transactions`
+  const url = `https://chainscan-galileo.0g.ai/v1/transaction?limit=${limit}&skip=${skip}&t=${t}&tab=transactions`
 
   try {
     const res = await fetch(url)
@@ -534,7 +534,7 @@ export async function getLatestTransactions(limit = 10, skip = 0) {
 }
 export async function getBlockByHash(hash: string) {
   try {
-    const res = await fetch(`https://47.86.103.93/v1/block/${hash}`)
+    const res = await fetch(`https://chainscan-galileo.0g.ai/v1/block/${hash}`)
     const data = await res.json()
     return data.result
   } catch (err) {
@@ -545,7 +545,7 @@ export async function getBlockByHash(hash: string) {
 
 // src/lib/rpc.ts
 
-const API_BASE = 'https://47.86.103.93/v1'
+const API_BASE = 'https://chainscan-galileo.0g.ai/v1'
 
 export async function getBlockDetailByHash(hash: string) {
   try {
